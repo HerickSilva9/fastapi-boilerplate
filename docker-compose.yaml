@@ -1,0 +1,25 @@
+services:
+  backend:
+    build: .
+    image: fastapi-boilerplate
+    container_name: api
+    environment:
+      PATH: "/app/.venv/bin:$PATH"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - 8000:8000
+    volumes:
+      - ./app:/app/app
+
+  tests:
+    image: fastapi-boilerplate
+    container_name: tests
+    environment:
+      PATH: "/app/.venv/bin:$PATH"
+    command: python -m pytest -v
+    restart: "no"
+    volumes:
+      - ./app:/app/app
+      - ./tests:/app/tests
+    profiles:
+      - tests
