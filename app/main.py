@@ -1,13 +1,11 @@
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 
-from app.api.routes.content import content_router
-from app.api.routes.user import user_router
+from app.api.main import api_router
 
 app = FastAPI()
 
-app.include_router(user_router)
-app.include_router(content_router)
+app.include_router(api_router)
 
 # origins = [""] # Lista de origens permitidas
 

@@ -12,6 +12,9 @@ wheels/
 # Virtual environments
 .venv/
 
+# Banco de dados local para testes
+data.db
+
 # Environment variables
 # Em um novo projeto descomente a linha abaixo
 # .env
