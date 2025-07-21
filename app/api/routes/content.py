@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from fastapi import APIRouter
 
 from app.schemas.content import ContentCreate, ContentResponse, ContentUpdate
-from app.core.db_provider import get_session
+from app.api.dependencies import SessionDep
 from app.services import content
 
 router = APIRouter()
@@ -15,7 +14,7 @@ router = APIRouter()
 )
 def create_content(
     new_content_data: ContentCreate,
-    db: Session = Depends(get_session)
+    db: SessionDep
 ):
     return content.create_content(new_content_data, db)
 
@@ -25,7 +24,7 @@ def create_content(
                     tags=['Conteúdo'],
                     summary='Listar conteúdos'
 )
-def list_contents(db: Session = Depends(get_session)):
+def list_contents(db: SessionDep):
     return content.list_contents(db)
 
 
@@ -36,7 +35,7 @@ def list_contents(db: Session = Depends(get_session)):
 )
 def update_content(content_id: int, 
                    content_update_data: ContentUpdate,
-                   db: Session = Depends(get_session)
+                   db: SessionDep
 ):
     return content.update_content(content_id, content_update_data, db)
 
@@ -46,5 +45,5 @@ def update_content(content_id: int,
                        tags=['Conteúdo'],
                        summary='Deletar um conteúdo'
 )
-def delete_content(content_id: int, db: Session = Depends(get_session)):
+def delete_content(content_id: int, db: SessionDep):
     return content.delete_content(content_id, db)

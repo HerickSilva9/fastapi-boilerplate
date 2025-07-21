@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from fastapi import APIRouter
 
 from app.schemas.user import UserCreate, UserResponse, UserUpdate
-from app.core.db_provider import get_session
+from app.api.dependencies import SessionDep
 from app.services import user
 
 router = APIRouter()
@@ -15,7 +14,7 @@ router = APIRouter()
 )
 def create_user(
     new_user_data: UserCreate,
-    db: Session = Depends(get_session)
+    db: SessionDep
 ):
     return user.create_user(new_user_data, db)
 
@@ -25,7 +24,7 @@ def create_user(
                  tags=['Usuários'],
                  summary='Listar usuários'
 )
-def list_users(db: Session = Depends(get_session)):
+def list_users(db: SessionDep):
     return user.list_users(db)
 
 
@@ -37,7 +36,7 @@ def list_users(db: Session = Depends(get_session)):
 def update_user(
     user_id: int,
     user_update_data: UserUpdate,
-    db: Session = Depends(get_session)
+    db: SessionDep
 ):
     return user.update_user(user_id, user_update_data, db)
 
@@ -48,6 +47,6 @@ def update_user(
                     summary='Deletar um usuário'
 )
 def delete_user(user_id: int, 
-                db: Session = Depends(get_session)
+                db: SessionDep
 ):
     return user.delete_user(user_id, db)
