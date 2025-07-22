@@ -8,6 +8,7 @@ from app.utils.common import (
 from app.schemas.user import UserCreate, UserUpdate
 from app.core.security import generate_hash
 from app.models.user import User
+from app.services.crud import create
 
 
 def create_user(user_data: UserCreate, db: Session):
@@ -33,10 +34,7 @@ def create_user(user_data: UserCreate, db: Session):
 
         new_user.hash_password = generate_hash(user_data.password)
 
-        db.add(new_user)
-        db.commit()
-        db.refresh(new_user)  # Atualiza o objeto com os dados do banco
-        return new_user
+        return create(db, new_user)
 
     except HTTPException:
         raise

@@ -7,6 +7,7 @@ from app.models.content import Content
 from app.models.user import User
 from app.schemas.content import ContentCreate, ContentUpdate
 from app.utils.common import get_if_exists, is_update_data_valid
+from app.services.crud import create
 
 user_not_found = 'Usuário não encontrado'
 content_not_found = 'Conteúdo não encontrado'
@@ -22,12 +23,8 @@ def create_content(content_data: ContentCreate, db: Session):
             title=content_data.title, 
             content=content_data.new_content
         )
-
-        db.add(new_content)
-        db.commit()
-        db.refresh(new_content)  # Atualiza o objeto com os dados do banco
         
-        return new_content
+        return create(db, new_content)
 
     except HTTPException:
         raise
