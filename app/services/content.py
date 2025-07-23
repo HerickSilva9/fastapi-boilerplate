@@ -6,17 +6,15 @@ from fastapi import HTTPException
 from app.models.content import Content
 from app.models.user import User
 from app.schemas.content import ContentCreate, ContentUpdate
-from app.utils.common import get_if_exists, is_update_data_valid
-from app.services.crud import create
+from app.utils.common import is_update_data_valid
+from app.services.crud import create, get_by_id
 
-user_not_found = 'Usuário não encontrado'
-content_not_found = 'Conteúdo não encontrado'
+content_not_found = 'Content not found'
 
 
-def create_content(content_data: ContentCreate, db: Session):
+def create_content(db: Session, content_data: ContentCreate):
     try:
-        user_id = content_data.user_id
-        get_if_exists(User, db, user_not_found, User.id == user_id)
+        get_by_id(db, User, content_data.user_id, 'User not found')
 
         new_content = Content(
             user_id=content_data.user_id, 
@@ -43,14 +41,12 @@ def list_contents(db: Session):
 
 
 def update_content(
+        db: Session,
         content_id: int, 
-        content_update_data: ContentUpdate, 
-        db: Session
+        content_update_data: ContentUpdate 
 ):
     try:
-        content = get_if_exists(
-            Content, db, content_not_found, Content.id == content_id
-        )
+        content = get_by_id(db, Content, content_id, content_not_found)
 
         is_data_modified = False
 
@@ -76,11 +72,9 @@ def update_content(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-def delete_content(content_id: int, db: Session):
+def delete_content(db: Session, content_id: int):
     try:
-        content = get_if_exists(
-            Content, db, content_not_found, Content.id == content_id
-        )
+        content = get_by_id(db, Content, content_id, content_not_found)
 
         content.deleted_at = datetime.now(timezone.utc)
         db.commit()

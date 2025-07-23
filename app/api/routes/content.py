@@ -8,8 +8,8 @@ router = APIRouter(prefix='/content', tags=['Conteúdo'])
 
 
 @router.post('/create/', response_model=ContentResponse)
-def create_content(new_content_data: ContentCreate, db: SessionDep):
-    return content.create_content(new_content_data, db)
+def create_content(db: SessionDep, new_content_data: ContentCreate):
+    return content.create_content(db, new_content_data)
 
 
 @router.get('/list/', response_model=list[ContentResponse])
@@ -19,11 +19,11 @@ def list_contents(db: SessionDep):
 
 @router.put('/update/{content_id}', response_model=ContentResponse)
 def update_content(
-        content_id: int, content_update_data: ContentUpdate, db: SessionDep
+        db: SessionDep, content_id: int, content_update_data: ContentUpdate
         ):
-    return content.update_content(content_id, content_update_data, db)
+    return content.update_content(db, content_id, content_update_data)
 
 
 @router.delete('/delete/{content_id}', response_model=ContentResponse)
-def delete_content(content_id: int, db: SessionDep):
-    return content.delete_content(content_id, db)
+def delete_content(db: SessionDep, content_id: int):
+    return content.delete_content(db, content_id)

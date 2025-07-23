@@ -2,6 +2,7 @@ from fastapi import HTTPException
 import pytest
 
 from app.models.user import User
+from app.services.crud import get_by_id
 from app.utils import common
 
 
@@ -17,32 +18,6 @@ def new_user(db_session):
 def test_new_user(new_user):
     assert new_user is not None
     assert new_user.id == 1
-
-
-def test_check_get_if_exists_class_with_existing_user(db_session, new_user):
-    record = common.get_if_exists(User, db_session, '', User.id == 1)
-    
-    assert record is not None
-    assert isinstance(record, User)
-
-
-def test_check_get_if_exists_data_with_existing_user(db_session, new_user):
-    record = common.get_if_exists(User, db_session, '', User.id == 1)
-    
-    assert record.id == 1
-    assert record.name == 'Test'
-    assert record.email == 'my@email.com'
-    assert record.hash_password == 'test'
-    assert record.created_at is not None
-    assert record.updated_at is None
-    assert record.deleted_at is None
-
-
-def test_check_get_if_exists_raises_exception_when_not_found(db_session):
-    with pytest.raises(HTTPException) as exc_info:
-        record = common.get_if_exists(User, db_session, '', User.id ==99999)
-
-    assert exc_info.value.status_code == 404
 
 
 def test_check_email_exists(db_session, new_user):
