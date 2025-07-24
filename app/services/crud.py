@@ -22,3 +22,16 @@ def get_by_id(db: Session, model_class, id: int, error_msg:str = 'Not found'):
     if result is None:
         raise HTTPException(status_code=404, detail=f'{error_msg}')
     return result
+
+
+def commit_instance(db: Session, instance):
+    """Return the commmited instance"""
+    db.commit()
+    return instance
+
+
+def commit_and_refresh(db: Session, instance):
+    """Return the committed and refreshed instance."""
+    db.commit()
+    db.refresh(instance)
+    return instance

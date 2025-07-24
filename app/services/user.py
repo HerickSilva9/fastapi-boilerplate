@@ -7,7 +7,7 @@ from app.utils.common import check_email_exists, is_update_data_valid
 from app.schemas.user import UserCreate, UserUpdate
 from app.core.security import generate_hash
 from app.models.user import User
-from app.services.crud import create, get_by_id
+from app.services.crud import create, get_by_id, commit_instance
 
 
 def create_user(db: Session, user_data: UserCreate):
@@ -78,8 +78,7 @@ def update_user(db: Session, user_id: int, user_update_data: UserUpdate):
 
         if is_data_modified:
             user.updated_at = datetime.now(timezone.utc)
-            db.commit()
-            db.refresh(user)  # Atualiza o objeto com os dados do banco
+            commit_instance(db, user)
 
         return user
         
@@ -96,10 +95,7 @@ def delete_user(db: Session, user_id: int):
 
         user.deleted_at = datetime.now(timezone.utc)
 
-        db.commit()
-        db.refresh(user)
-
-        return user
+        return commit_instance(db, user)
     
     except HTTPException:
         raise

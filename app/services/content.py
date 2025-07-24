@@ -7,7 +7,7 @@ from app.models.content import Content
 from app.models.user import User
 from app.schemas.content import ContentCreate, ContentUpdate
 from app.utils.common import is_update_data_valid
-from app.services.crud import create, get_by_id
+from app.services.crud import create, get_by_id, commit_instance
 
 content_not_found = 'Content not found'
 
@@ -60,8 +60,7 @@ def update_content(
 
         if is_data_modified:
             content.updated_at = datetime.now(timezone.utc)
-            db.commit()
-            db.refresh(content)
+            commit_instance(db, content)
 
         return content
         
@@ -77,9 +76,7 @@ def delete_content(db: Session, content_id: int):
         content = get_by_id(db, Content, content_id, content_not_found)
 
         content.deleted_at = datetime.now(timezone.utc)
-        db.commit()
-        db.refresh(content)
-        return content
+        return commit_instance(db, content)
 
     except HTTPException:
         raise
