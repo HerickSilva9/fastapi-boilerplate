@@ -9,7 +9,7 @@ from pydantic import BaseModel, ConfigDict
 class ContentCreate(BaseModel):
     user_id: int
     title: Optional[str] = None
-    new_content: str
+    content: str
 
 
 class ContentResponse(BaseModel):

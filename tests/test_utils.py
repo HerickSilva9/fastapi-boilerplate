@@ -8,7 +8,7 @@ from app.utils import common
 
 @pytest.fixture
 def new_user(db_session):
-    new_record = User(name='Test', email='my@email.com', hash_password='test')
+    new_record = User(name='Test', email='my@email.com', password='test')
     db_session.add(new_record)
     db_session.commit()
     db_session.refresh(new_record)

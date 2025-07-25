@@ -12,7 +12,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     email = Column(String, unique=True)
-    hash_password = Column(String)
+    password = Column(String)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, nullable=True, default=None)
     deleted_at = Column(DateTime, nullable=True, default=None)
