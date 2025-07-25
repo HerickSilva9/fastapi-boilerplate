@@ -15,18 +15,11 @@ content_not_found = 'Content not found'
 def create_content(db: Session, content_data: ContentCreate):
     try:
         get_by_id(db, User, content_data.user_id, 'User not found')
-
-        new_content = Content(
-            user_id=content_data.user_id, 
-            title=content_data.title, 
-            content=content_data.new_content
-        )
-        
+        new_content = Content(**content_data.model_dump())
         return create(db, new_content)
 
     except HTTPException:
         raise
-
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
