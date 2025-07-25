@@ -3,14 +3,14 @@ from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
-from app.utils.common import (
-    check_email_exists, get_if_exists, is_update_data_valid)
+from app.utils.common import check_email_exists, is_update_data_valid
 from app.schemas.user import UserCreate, UserUpdate
 from app.core.security import generate_hash
 from app.models.user import User
+from app.services.crud import create, get_by_id, commit_instance
 
 
-def create_user(user_data: UserCreate, db: Session):
+def create_user(db: Session, user_data: UserCreate):
     try:
         new_user = User(name=user_data.name, email=user_data.email)
 
@@ -33,10 +33,7 @@ def create_user(user_data: UserCreate, db: Session):
 
         new_user.hash_password = generate_hash(user_data.password)
 
-        db.add(new_user)
-        db.commit()
-        db.refresh(new_user)  # Atualiza o objeto com os dados do banco
-        return new_user
+        return create(db, new_user)
 
     except HTTPException:
         raise
@@ -54,15 +51,9 @@ def list_users(db: Session):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-def update_user(
-        user_id: int,  
-        user_update_data: UserUpdate,
-        db: Session
-):
+def update_user(db: Session, user_id: int, user_update_data: UserUpdate):
     try:
-        user = get_if_exists(
-            User, db, 'Usuário não encontrado', User.id == user_id
-        )
+        user = get_by_id(db, User, user_id, 'User not found')
         
         # Tratamento de erro para não permitir email duplicado
         if check_email_exists(user_update_data.new_email, db):
@@ -87,8 +78,7 @@ def update_user(
 
         if is_data_modified:
             user.updated_at = datetime.now(timezone.utc)
-            db.commit()
-            db.refresh(user)  # Atualiza o objeto com os dados do banco
+            commit_instance(db, user)
 
         return user
         
@@ -99,22 +89,16 @@ def update_user(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-def delete_user(user_id: int, db: Session):
+def delete_user(db: Session, user_id: int):
     try:
-        user = get_if_exists(
-            User, db, 'Usuário não encontrado', User.id == user_id
-        )
+        user = get_by_id(db, User, user_id, 'User not found')
 
         user.deleted_at = datetime.now(timezone.utc)
 
-        db.commit()
-        db.refresh(user)
-
-        return user
+        return commit_instance(db, user)
     
     except HTTPException:
         raise
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-        
