@@ -1,42 +1,38 @@
-from datetime import datetime
+from datetime import datetime as dt
 
 from pydantic import ValidationError
 import pytest
 
 from app.schemas.user import UserCreate, UserResponse, UserUpdate
 
+
 @pytest.fixture
 def user_create():
-    user = UserCreate(
-        name='Test User', email='testuser@email.com', password='mypassword'
+    return UserCreate(
+        name='Test User', email='user@email', password='mypassword'
         )
-    return user
 
 
 @pytest.fixture
 def user_response():
-    user = UserResponse(
-        id=15, name='Test User', email='testuser@email.com', 
-        created_at=datetime(2025, 7, 9, 18, 11, 31, 114597), 
-        updated_at=datetime(2025, 7, 9, 18, 11, 31, 114597), 
-        deleted_at=datetime(2025, 7, 9, 18, 11, 31, 114597)
+    return UserResponse(
+        id=15, name='Test User', email='user@email', 
+        created_at=dt(2025, 7, 9, 18, 11, 31, 114597), 
+        updated_at=dt(2025, 7, 9, 18, 11, 31, 114597), 
+        deleted_at=dt(2025, 7, 9, 18, 11, 31, 114597)
     )
-    return user
 
 
 @pytest.fixture
 def user_update():
-    user = UserUpdate(
-        new_name='Test User', new_email='testuser@email.com', 
-        new_password='mynewpassword'
-    )
-    return user
+    return UserUpdate(
+        new_name='newUser', new_email='user@email', new_password='newpassword'
+        )
 
 
 def test_schema_user_create_success(user_create):
-    assert isinstance(user_create, UserCreate)
     assert user_create.name == 'Test User'
-    assert user_create.email == 'testuser@email.com'
+    assert user_create.email == 'user@email'
     assert user_create.password == 'mypassword'
 
 
@@ -48,20 +44,16 @@ def test_user_create_invalid_data():
 def test_schema_user_response_success(user_response):
     assert user_response.id == 15
     assert user_response.name == 'Test User'
-    assert user_response.email == 'testuser@email.com'
-    assert user_response.updated_at == datetime(2025, 7, 9, 18, 11, 31, 114597)
-    assert user_response.deleted_at == datetime(2025, 7, 9, 18, 11, 31, 114597)
-
-
-def test_class_user_response(user_response):
-    assert isinstance(user_response, UserResponse)
+    assert user_response.email == 'user@email'
+    assert user_response.updated_at == dt(2025, 7, 9, 18, 11, 31, 114597)
+    assert user_response.deleted_at == dt(2025, 7, 9, 18, 11, 31, 114597)
 
 
 def test_user_response_optinal_fields():
     user = UserResponse(
-        id=15, name='Test User', email='testuser@email.com', 
-        created_at=datetime(2025, 7, 9, 18, 11, 31, 114597), 
-    )
+        id=15, name='Test User', email='user@email', 
+        created_at=dt(2025, 7, 9, 18, 11, 31, 114597), 
+        )
     assert user.updated_at is None
     assert user.deleted_at is None
 
@@ -72,9 +64,9 @@ def test_user_response_invalid_data():
 
 
 def test_schema_user_update_success(user_update):
-    assert user_update.new_name == 'Test User'
-    assert user_update.new_email == 'testuser@email.com'
-    assert user_update.new_password == 'mynewpassword'
+    assert user_update.new_name == 'newUser'
+    assert user_update.new_email == 'user@email'
+    assert user_update.new_password == 'newpassword'
 
 
 def test_schema_user_update_optional_fields():
@@ -84,10 +76,9 @@ def test_schema_user_update_optional_fields():
     assert user.new_password is None
 
 
-def test_class_user_update(user_update):
+def test_class_users(user_create, user_update, user_response):
+    assert isinstance(user_create, UserCreate)
     assert isinstance(user_update, UserUpdate)
-
-
-def test_user_response_is_datetime(user_response):
-    assert isinstance(user_response.created_at, datetime)
-    assert isinstance(user_response.deleted_at, datetime)
+    assert isinstance(user_response, UserResponse)
+    assert isinstance(user_response.created_at, dt)
+    assert isinstance(user_response.deleted_at, dt)
