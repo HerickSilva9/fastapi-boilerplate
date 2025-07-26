@@ -2,6 +2,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
 from app.models import Base
+from app.models import user, content # force import of models to create tables
 
 # Database URL
 DATABASE_URL = f'sqlite:///app/core/data.db'
