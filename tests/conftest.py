@@ -20,7 +20,10 @@ TestingSessionLocal = sessionmaker(
     autocommit=False, autoflush=False, bind=engine
 )
 
-client = TestClient(app)
+
+@pytest.fixture(scope='function')
+def client(db_session):
+    return TestClient(app)
 
 
 def override_get_db():
