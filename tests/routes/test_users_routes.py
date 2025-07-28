@@ -1,6 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 
+
 @pytest.fixture
 def user_data():
     return {"name": "Alice", "email": "alice@example", "password": "123456"}
@@ -14,11 +15,12 @@ def create_user(client, db_session, user_data):
 
 def test_create_user_with_valid_data(client, db_session, create_user):
     response = create_user
-
     assert response.status_code == 200
-    
+
     data = response.json()
-    assert ('id' and 'name' and 'email' and 'created_at') in data
+    keys = ['id', 'name', 'email', 'created_at', 'updated_at', 'deleted_at']
+    for key in keys:
+        assert key in data
     assert data['name'] == 'Alice'
     assert data['email'] == 'alice@example'
     assert data['updated_at'] is None
@@ -51,11 +53,12 @@ def test_create_user_with_empty_data(client):
 def test_get_users(client, db_session, create_user):
     create_user
     response = client.get('/user/list/')
-
     assert response.status_code == 200
 
     data = response.json()
-    assert ('id' and 'name' and 'email' and 'created_at') in data[0]
+    keys = ['id', 'name', 'email', 'created_at', 'updated_at', 'deleted_at']
+    for key in keys:
+        assert key in data[0]
     assert data[0]['name'] == 'Alice'
     assert data[0]['email'] == 'alice@example'
     assert data[0]['updated_at'] is None
@@ -66,11 +69,12 @@ def test_update_user_success(client, db_session, create_user):
     create_user
     update = {'new_name': 'Foo', 'new_email': '@email', 'new_password': '123'}
     response = client.put('/user/update/1/', json=update)
-    
     assert response.status_code == 200
-    
+
     data = response.json()
-    assert ('id' and 'name' and 'email' and 'created_at') in data
+    keys = ['id', 'name', 'email', 'created_at', 'updated_at', 'deleted_at']
+    for key in keys:
+        assert key in data
     assert data['name'] == 'Foo'
     assert data['email'] == '@email'
     assert data['updated_at'] is not None
@@ -80,7 +84,7 @@ def test_update_user_success(client, db_session, create_user):
 def test_update_user_with_duplicated_email(client, db_session, create_user):
     create_user
     update = {'new_email': 'alice@example'}
-    response = client.put('/user/update/1/', json=update)    
+    response = client.put('/user/update/1/', json=update)
     assert response.status_code == 409
 
 
@@ -88,6 +92,11 @@ def test_delete_user_success(client, create_user):
     create_user
     response = client.delete('/user/delete/1')
     assert response.status_code == 200
+
+    data = response.json()
+    keys = ['id', 'name', 'email', 'created_at', 'updated_at', 'deleted_at']
+    for key in keys:
+        assert key in data
 
 
 def test_delete_user_with_invalid_user(client):
