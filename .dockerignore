@@ -16,5 +16,4 @@ wheels/
 data.db
 
 # Environment variables
-# Em um novo projeto descomente a linha abaixo
-# .env
+.env
