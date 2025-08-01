@@ -11,6 +11,7 @@ services:
     ports:
       - 8000:8000
     volumes:
+      - ./.env:/app/.env
       - ./app:/app/app
 
   tests:
@@ -21,6 +22,7 @@ services:
     command: python -m pytest --cov=app --cov-report=term-missing
     restart: "no"
     volumes:
+      - ./.env:/app/.env
       - ./app:/app/app
       - ./tests:/app/tests
     profiles:
