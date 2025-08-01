@@ -46,13 +46,13 @@ def test_create_content_with_valid_data(
     assert data['deleted_at'] is None
 
 
-def test_create_user_with_empty_fields(client, create_user):
+def test_create_content_with_empty_fields(client, create_user):
     create_user
     response = client.post('/content/create/', json={})
     assert response.status_code == 422
 
 
-def test_get_users_success(
+def test_get_content_success(
         client, db_session, create_user, create_content, keys_content_response
         ):
     create_user
@@ -70,6 +70,11 @@ def test_get_users_success(
     assert data['created_at'] is not None
     assert data['updated_at'] is None
     assert data['deleted_at'] is None
+
+
+def test_get_content_with_invalid_id(client, db_session):
+    response = client.get('/content/get/99999/')
+    assert response.status_code == 404
 
 
 def test_update_content_success(
@@ -93,7 +98,7 @@ def test_update_content_success(
     assert data['deleted_at'] is None
 
 
-def test_delete_user_success(client, create_user, create_content):
+def test_delete_content_success(client, create_user, create_content):
     create_user
     create_content
     response = client.delete('/content/delete/1')
@@ -102,6 +107,6 @@ def test_delete_user_success(client, create_user, create_content):
     assert data['deleted_at'] is not None
 
 
-def test_delete_user_with_invalid_content(client, db_session):
+def test_delete_content_with_invalid_id(client, db_session):
     response = client.delete('/content/delete/99999')
     assert response.status_code == 404

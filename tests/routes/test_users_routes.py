@@ -52,7 +52,8 @@ def test_create_user_with_empty_data(client):
     assert response_1.status_code == 422
     assert response_2.status_code == 422
 
-def test_get_users(client, db_session, create_user):
+
+def test_get_user(client, db_session, create_user):
     create_user
     response = client.get('/user/get/1/')
     assert response.status_code == 200
@@ -67,6 +68,11 @@ def test_get_users(client, db_session, create_user):
     assert data['created_at'] is not None
     assert data['updated_at'] is None
     assert data['deleted_at'] is None
+
+
+def test_get_user_with_invalid_id(client, db_session):
+    response = client.get('/user/get/99999/')
+    assert response.status_code == 404
 
 
 def test_update_user_success(client, db_session, create_user):
