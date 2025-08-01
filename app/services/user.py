@@ -13,7 +13,7 @@ from app.services.crud import create, get_by_id, commit_instance
 def create_user(db: Session, user_data: UserCreate):
     try:
         new_user = User(**user_data.model_dump())
-        
+
         # Validate fields
         if user_data.name == '' or user_data.email == '':
             raise HTTPException(422, 'Empty fields.')
@@ -32,11 +32,13 @@ def create_user(db: Session, user_data: UserCreate):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-def list_users(db: Session):
+def get_user_by_id(db: Session, user_id: int):
     try:
-        users = db.query(User).all()
-        return users
-    
+        user = get_by_id(db, User, user_id)
+        return user
+
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -44,11 +46,11 @@ def list_users(db: Session):
 def update_user(db: Session, user_id: int, user_update_data: UserUpdate):
     try:
         user = get_by_id(db, User, user_id, 'User not found')
-        
+
         # Tratamento de erro para não permitir email duplicado
         if check_email_exists(user_update_data.new_email, db):
             raise HTTPException(
-                status_code=409, 
+                status_code=409,
                 detail='Existe uma conta associada a este endereço de email.'
             )
 
@@ -71,10 +73,10 @@ def update_user(db: Session, user_id: int, user_update_data: UserUpdate):
             commit_instance(db, user)
 
         return user
-        
+
     except HTTPException:
         raise
-    
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -86,7 +88,7 @@ def delete_user(db: Session, user_id: int):
         user.deleted_at = datetime.now(timezone.utc)
 
         return commit_instance(db, user)
-    
+
     except HTTPException:
         raise
 
