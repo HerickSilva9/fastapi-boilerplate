@@ -57,19 +57,19 @@ def test_get_users_success(
         ):
     create_user
     create_content
-    response = client.get('/content/list/')
+    response = client.get('/content/get/1/')
     assert response.status_code == 200
 
     data = response.json()
     for key in keys_content_response:
-        assert key in data[0]
-    assert data[0]['id'] == 1
-    assert data[0]['user_id'] == 1
-    assert data[0]['title'] == 'Test'
-    assert data[0]['content'] == 'test content'
-    assert data[0]['created_at'] is not None
-    assert data[0]['updated_at'] is None
-    assert data[0]['deleted_at'] is None
+        assert key in data
+    assert data['id'] == 1
+    assert data['user_id'] == 1
+    assert data['title'] == 'Test'
+    assert data['content'] == 'test content'
+    assert data['created_at'] is not None
+    assert data['updated_at'] is None
+    assert data['deleted_at'] is None
 
 
 def test_update_content_success(
