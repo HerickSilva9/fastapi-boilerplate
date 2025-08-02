@@ -46,30 +46,35 @@ def test_create_content_with_valid_data(
     assert data['deleted_at'] is None
 
 
-def test_create_user_with_empty_fields(client, create_user):
+def test_create_content_with_empty_fields(client, create_user):
     create_user
     response = client.post('/content/create/', json={})
     assert response.status_code == 422
 
 
-def test_get_users_success(
+def test_get_content_success(
         client, db_session, create_user, create_content, keys_content_response
         ):
     create_user
     create_content
-    response = client.get('/content/list/')
+    response = client.get('/content/get/1/')
     assert response.status_code == 200
 
     data = response.json()
     for key in keys_content_response:
-        assert key in data[0]
-    assert data[0]['id'] == 1
-    assert data[0]['user_id'] == 1
-    assert data[0]['title'] == 'Test'
-    assert data[0]['content'] == 'test content'
-    assert data[0]['created_at'] is not None
-    assert data[0]['updated_at'] is None
-    assert data[0]['deleted_at'] is None
+        assert key in data
+    assert data['id'] == 1
+    assert data['user_id'] == 1
+    assert data['title'] == 'Test'
+    assert data['content'] == 'test content'
+    assert data['created_at'] is not None
+    assert data['updated_at'] is None
+    assert data['deleted_at'] is None
+
+
+def test_get_content_with_invalid_id(client, db_session):
+    response = client.get('/content/get/99999/')
+    assert response.status_code == 404
 
 
 def test_update_content_success(
@@ -93,7 +98,7 @@ def test_update_content_success(
     assert data['deleted_at'] is None
 
 
-def test_delete_user_success(client, create_user, create_content):
+def test_delete_content_success(client, create_user, create_content):
     create_user
     create_content
     response = client.delete('/content/delete/1')
@@ -102,6 +107,6 @@ def test_delete_user_success(client, create_user, create_content):
     assert data['deleted_at'] is not None
 
 
-def test_delete_user_with_invalid_content(client, db_session):
+def test_delete_content_with_invalid_id(client, db_session):
     response = client.delete('/content/delete/99999')
     assert response.status_code == 404

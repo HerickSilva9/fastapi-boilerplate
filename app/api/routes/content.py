@@ -12,9 +12,9 @@ def create_content(db: SessionDep, new_content_data: ContentCreate):
     return content.create_content(db, new_content_data)
 
 
-@router.get('/list/', response_model=list[ContentResponse])
-def list_contents(db: SessionDep):
-    return content.list_contents(db)
+@router.get('/get/{content_id}', response_model=ContentResponse)
+def get_content_by_id(db: SessionDep, content_id: int):
+    return content.get_content_by_id(db, content_id)
 
 
 @router.put('/update/{content_id}', response_model=ContentResponse)
