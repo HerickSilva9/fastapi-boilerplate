@@ -24,19 +24,21 @@ def create_content(db: Session, content_data: ContentCreate):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-def list_contents(db: Session):
+def get_content_by_id(db: Session, content_id: int):
     try:
-        contents = db.query(Content).all()
-        return contents
-    
+        content = get_by_id(db, Content, content_id)
+        return content
+
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 def update_content(
         db: Session,
-        content_id: int, 
-        content_update_data: ContentUpdate 
+        content_id: int,
+        content_update_data: ContentUpdate
 ):
     try:
         content = get_by_id(db, Content, content_id, content_not_found)
@@ -56,7 +58,7 @@ def update_content(
             commit_instance(db, content)
 
         return content
-        
+
     except HTTPException:
         raise
 

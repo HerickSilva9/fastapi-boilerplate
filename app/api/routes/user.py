@@ -12,9 +12,9 @@ def create_user(new_user_data: UserCreate, db: SessionDep):
     return user.create_user(db, new_user_data)
 
 
-@router.get('/list/', response_model=list[UserResponse])
-def list_users(db: SessionDep):
-    return user.list_users(db)
+@router.get('/get/{user_id}', response_model=UserResponse)
+def get_user_by_id(db: SessionDep, user_id: int):
+    return user.get_user_by_id(db, user_id)
 
 
 @router.put('/update/{user_id}/', response_model=UserResponse)

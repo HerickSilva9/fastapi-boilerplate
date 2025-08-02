@@ -21,8 +21,10 @@ def test_create_user_with_valid_data(client, db_session, create_user):
     keys = ['id', 'name', 'email', 'created_at', 'updated_at', 'deleted_at']
     for key in keys:
         assert key in data
+    assert data['id'] == 1
     assert data['name'] == 'Alice'
     assert data['email'] == 'alice@example'
+    assert data['created_at'] is not None
     assert data['updated_at'] is None
     assert data['deleted_at'] is None
 
@@ -50,19 +52,27 @@ def test_create_user_with_empty_data(client):
     assert response_1.status_code == 422
     assert response_2.status_code == 422
 
-def test_get_users(client, db_session, create_user):
+
+def test_get_user(client, db_session, create_user):
     create_user
-    response = client.get('/user/list/')
+    response = client.get('/user/get/1/')
     assert response.status_code == 200
 
     data = response.json()
     keys = ['id', 'name', 'email', 'created_at', 'updated_at', 'deleted_at']
     for key in keys:
-        assert key in data[0]
-    assert data[0]['name'] == 'Alice'
-    assert data[0]['email'] == 'alice@example'
-    assert data[0]['updated_at'] is None
-    assert data[0]['deleted_at'] is None
+        assert key in data
+    assert data['id'] == 1
+    assert data['name'] == 'Alice'
+    assert data['email'] == 'alice@example'
+    assert data['created_at'] is not None
+    assert data['updated_at'] is None
+    assert data['deleted_at'] is None
+
+
+def test_get_user_with_invalid_id(client, db_session):
+    response = client.get('/user/get/99999/')
+    assert response.status_code == 404
 
 
 def test_update_user_success(client, db_session, create_user):
@@ -75,8 +85,10 @@ def test_update_user_success(client, db_session, create_user):
     keys = ['id', 'name', 'email', 'created_at', 'updated_at', 'deleted_at']
     for key in keys:
         assert key in data
+    assert data['id'] == 1
     assert data['name'] == 'Foo'
     assert data['email'] == '@email'
+    assert data['created_at'] is not None
     assert data['updated_at'] is not None
     assert data['deleted_at'] is None
 
