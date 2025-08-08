@@ -4,10 +4,10 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
 from app.utils.common import check_email_exists, is_update_data_valid
+from app.services.crud import create, get_by_id, commit_instance
 from app.schemas.user import UserCreate, UserUpdate
 from app.core.security import generate_hash
 from app.models.user import User
-from app.services.crud import create, get_by_id, commit_instance
 
 
 def create_user(db: Session, user_data: UserCreate):

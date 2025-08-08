@@ -13,6 +13,7 @@ ENV PATH="/app/.venv/bin:$PATH" PYTHONPATH=/app UV_LINK_MODE=copy
 COPY ./pyproject.toml ./uv.lock /app/
 RUN uv sync --locked --no-dev
 
+
 # ---- Development & Tests Stage ----
 FROM base AS dev
 
@@ -23,6 +24,7 @@ RUN uv sync --locked --dev
 COPY ./app /app/app
 COPY ./tests /app/tests
 CMD ["python", "-m", "pytest", "--cov=app", "--cov-report=term-missing"]
+
 
 # ---- Production Stage ----
 FROM base AS production

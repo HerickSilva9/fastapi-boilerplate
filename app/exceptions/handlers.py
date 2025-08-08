@@ -1,6 +1,6 @@
-from fastapi import Request
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.responses import JSONResponse
+from fastapi import Request
 
 
 async def http_exception_handler(request: Request, exc: StarletteHTTPException):

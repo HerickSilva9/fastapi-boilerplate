@@ -3,11 +3,11 @@ from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
-from app.models.content import Content
-from app.models.user import User
+from app.services.crud import create, get_by_id, commit_instance
 from app.schemas.content import ContentCreate, ContentUpdate
 from app.utils.common import is_update_data_valid
-from app.services.crud import create, get_by_id, commit_instance
+from app.models.content import Content
+from app.models.user import User
 
 content_not_found = 'Content not found'
 
